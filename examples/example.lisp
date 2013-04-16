@@ -2,7 +2,7 @@
   (:use :cl)
   (:export #:example))
 
-(dolist (i '(cl-glut cl-opengl cl-glu))
+(dolist (i '(cl-tga cl-glut cl-opengl cl-glu))
   (require i))
 
 (in-package #:cl-tga-example)
