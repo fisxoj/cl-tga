@@ -2,14 +2,15 @@
   (:use :cl)
   (:export #:example))
 
-(dolist (i '(cl-tga cl-glut cl-opengl cl-glu))
+(dolist (i '(cl-tga-opengl cl-glut cl-glu))
   (require i))
 
 (in-package #:cl-tga-example)
 
 (defclass cl-tga-example-window (glut:window)
   ((texture :accessor window-texture
-	    :initform nil))
+	    :initform nil)
+   (index :accessor index :initform 0))
   (:default-initargs :width 400
 		     :height 400
 		     :title "cl-tga Example"
@@ -18,21 +19,35 @@
 (defun example ()
   (glut:display-window (make-instance 'cl-tga-example-window)))
 
+(defparameter *files* (delete-duplicates
+                       (append
+                        (directory
+                         (merge-pathnames "examples/*.tga"
+                                          (asdf:system-source-directory
+                                           (asdf:find-system :cl-tga))))
+                        (directory
+                         (merge-pathnames "examples/*.TGA"
+                                          (asdf:system-source-directory
+                                           (asdf:find-system :cl-tga)))))))
+
+(defun load-texture (file window)
+  (format t "load tga ~s~%" file)
+  (with-simple-restart (continue "skip image")
+    (let ((image (time (tga:read-tga file))))
+      (unless (window-texture window)
+        (setf (window-texture window) (car (gl:gen-textures 1))))
+      (gl:bind-texture :texture-2d (window-texture window))
+      (tga-gl:tex-image-2d image)
+      (gl:tex-parameter :texture-2d :texture-min-filter :nearest)
+      (gl:tex-parameter :texture-2d :texture-mag-filter :nearest)
+      (gl:tex-parameter :texture-2d :texture-wrap-r :clamp-to-edge)
+      (gl:tex-parameter :texture-2d :texture-wrap-s :clamp-to-edge))))
+
 (defmethod glut:display-window :before ((window cl-tga-example-window))
-  (let ((image (time (tga:read-tga (merge-pathnames "examples/trucks.tga"
-						    (asdf:system-source-directory (asdf:find-system :cl-tga)))))))
-
-    (setf (window-texture window) (car (gl:gen-textures 1)))
-    (gl:bind-texture :texture-2d (window-texture window))
-    (gl:tex-parameter :texture-2d :texture-min-filter :linear)
-    (gl:tex-parameter :texture-2d :texture-mag-filter :linear)
-
-    (gl:tex-image-2d :texture-2d 0 :rgba
-		     (tga:image-width image) (tga:image-height image)
-		     0 (ecase (tga:image-channels image)
-			 (3 :bgr)
-			 (4 :bgra))
-		     :unsigned-byte (tga:image-data image)))
+  (load-texture (merge-pathnames "examples/trucks.tga"
+                                 (asdf:system-source-directory
+                                  (asdf:find-system :cl-tga)))
+                window)
 
   (gl:clear-color 0 0 0 0)
   (gl:shade-model :flat))
@@ -70,3 +85,15 @@
 (defmethod glut:close ((window cl-tga-example-window))
   (when (window-texture window)
     (gl:delete-textures (list (window-texture window)))))
+
+(defmethod glut:keyboard ((window cl-tga-example-window) key x y)
+  (declare (ignore x y))
+  (when (eql key #\Esc)
+    (glut:destroy-current-window))
+  (when (eql key #\r)
+    (load-texture (nth (index window) *files*) window)
+    (glut:post-redisplay))
+  (when (eql key #\space)
+    (setf (index window) (mod (1+ (index window)) (length *files*)))
+    (load-texture (nth (index window) *files*) window)
+    (glut:post-redisplay)))
