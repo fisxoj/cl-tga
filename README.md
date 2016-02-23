@@ -1,5 +1,7 @@
 # CL-TGA
 
+[![Quicklisp](http://quickdocs.org/badge/cl-tga.svg)](http://quickdocs.org/cl-tga/)
+
 Cl-tga was written to facilitate loading .tga files into OpenGL programs.  It's a very simple library, and, at the moment, only supports non-RLE encoded forms of the files, though it shouldn't be hard to fix that.
 
 Cl-tga does *not* re-order the color bytes from the file body.  tga files are econded in bgr byte-order, and so loading code using cl-opengl should specify the :bgr or :bgra data format in order to not have wonky looking textures, eg.:
