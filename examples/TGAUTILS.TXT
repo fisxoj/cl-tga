@@ -1,0 +1,22 @@
+sample images from: http://googlesites.inequation.org/tgautilities
+unspecified license
+
+TRUEVISION TGA(tm) UTILITIES PACKAGE - March 26, 1990
+
+Additional files provided with this package are sample image files that have
+been created with various pixel depths in both uncompressed and compressed
+formats.  Some of the file names and associated descriptions are as follows:
+
+	UCM8.TGA	- Uncompressed color mapped 8 bit image
+	CCM8.TGA	- Compressed color mapped 8 bit image
+	UBW8.TGA	- Uncompressed black & white 8 bit image
+	CBW8.TGA	- Compressed black & white 8 bit image
+	UTC16.TGA	- Uncompressed True Color 16 bit image
+	CTC16.TGA	- Compressed True Color 16 bit image
+	UTC24.TGA	- Uncompressed True Color 24 bit image
+	CTC24.TGA	- Compressed True Color 24 bit image
+	UTC32.TGA	- Uncompressed True Color 32 bit image
+	CTC32.TGA	- Compressed True Color 32 bit image
+
+
+Truevision Software Development Team

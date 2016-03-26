@@ -8,5 +8,6 @@
 	   #:image-height
 	   #:image-bpp
 	   #:image-data
-	   #:image-channels))
+	   #:image-channels
+           #:read-tga-stream))
 
